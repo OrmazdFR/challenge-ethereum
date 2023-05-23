@@ -1,0 +1,22 @@
+{
+  "name": "challenge-ethereum",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OrmazdFR/challenge-ethereum.git"
+  },
+  "author": "OrmazdFR & Blazirus66",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/OrmazdFR/challenge-ethereum/issues"
+  },
+  "homepage": "https://github.com/OrmazdFR/challenge-ethereum#readme",
+  "devDependencies": {
+    "hardhat": "^2.14.0"
+  }
+}
