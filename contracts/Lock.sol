@@ -20,15 +20,17 @@ contract Lock {
         owner = payable(msg.sender);
     }
 
-    function withdraw() public {
+    function withdraw(uint percentage) public {
         // Uncomment this line, and the import of "hardhat/console.sol", to print a log in your terminal
         // console.log("Unlock time is %o and block timestamp is %o", unlockTime, block.timestamp);
 
         require(block.timestamp >= unlockTime, "You can't withdraw yet");
         require(msg.sender == owner, "You aren't the owner");
 
-        emit Withdrawal(address(this).balance, block.timestamp);
+        uint256 withdrawedBalance = address(this).balance * (percentage/100);
 
-        owner.transfer(address(this).balance);
+        emit Withdrawal(withdrawedBalance, block.timestamp);
+
+        owner.transfer(withdrawedBalance);
     }
 }
