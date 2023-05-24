@@ -1,36 +1,36 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-// Uncomment this line to use console.log
-// import "hardhat/console.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract Lock {
+contract ArbiPool is ERC20 {
     uint public unlockTime;
     address payable public owner;
+    IERC20 public usdt;
 
-    event Withdrawal(uint amount, uint when);
+    event buy(uint amount);
 
-    constructor(uint _unlockTime) payable {
+    constructor(address _usdt, uint _unlockTime) ERC20("ArbiPool", "ARP") {
         require(
             block.timestamp < _unlockTime,
-            "Unlock time should be in the future"
+            "Unlock time sould be in the future"
         );
-
+        usdt = IERC20(_usdt);
         unlockTime = _unlockTime;
         owner = payable(msg.sender);
+        _mint(msg.sender, 100000 * (10 ** uint256(decimals())));
     }
 
-    function withdraw(uint percentage) public {
-        // Uncomment this line, and the import of "hardhat/console.sol", to print a log in your terminal
-        // console.log("Unlock time is %o and block timestamp is %o", unlockTime, block.timestamp);
+    function buy(uint256 _amount) external {
+        require(usdt.transferFrom(msg.sender, address(this), _amount), "transfer failed");
+        _mint(msg.sender, _amount);
+    }
 
-        require(block.timestamp >= unlockTime, "You can't withdraw yet");
-        require(msg.sender == owner, "You aren't the owner");
-
-        uint256 withdrawedBalance = address(this).balance * (percentage/100);
-
-        emit Withdrawal(withdrawedBalance, block.timestamp);
-
-        owner.transfer(withdrawedBalance);
+    function withdraw(uint256 _amount) external {
+        require(msg.sender == owner, "Only owner can withdraw");
+        require(block.timestamp >= unlockTime, "Contract is still locked");
+        
+        usdt.transfer(owner, _amount);
     }
 }
+
