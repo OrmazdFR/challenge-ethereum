@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 // Ownable est un contrat de la bibliothèque OpenZeppelin qui implémente la notion de propriétaire. 
 // Par défaut, le compte qui déploie le contrat est défini comme le propriétaire.
 
-contract ArbiPool is ERC20, Ownable {
+contract ArbiPool is ERC20 {
     IERC20 public usdt;
     uint256 public unlockTime;
     uint256 public constant LOCK_PERIOD = 6 * 30 days;
@@ -41,13 +41,5 @@ contract ArbiPool is ERC20, Ownable {
         _burn(msg.sender, _amount);
         // Transfert des USDT à l'utilisateur
         require(usdt.transfer(msg.sender, _amount), "USDT transfer failed");
-    }
-
-// OnlyOwner est un modificateur de fonction qui restreint l'accès à la fonction uniquement au propriétaire du contrat.
-// Cette fonction permet à l'administrateur de récupérer les fonds du contract
-
-    function withdraw(uint256 _amount) public onlyOwner {
-        require(usdt.balanceOf(address(this)) >= _amount, "Contract has insufficient USDT");
-        require(usdt.transfer(owner(), _amount), "USDT transfer failed");
     }
 }
