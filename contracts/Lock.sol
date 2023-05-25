@@ -42,13 +42,14 @@ abstract contract ArbiPool is AccessControl, ERC20 {
     }
 
     function buy(uint256 _amount) external {
-        require(!isBanned(msg.sender), "Can't buy if your address is banned");
+        require(!isBanned(msg.sender), "Banned addresses can't buy");
         require(usdt.transferFrom(msg.sender, address(this), _amount), "transfer failed");
         _mint(msg.sender, _amount);
         lastPurchase[msg.sender] = block.timestamp;
     }
 
     function sell(uint256 _amount) external {
+        require(!isBanned(msg.sender), "Banned addresses can't sell");
         require(block.timestamp - lastPurchase[msg.sender] >= LOCK_PERIOD, "Tokens are locked");
         // Vérifie la balance de l'utilisateur
         require(balanceOf(msg.sender) >= _amount, "Insufficient balance");
@@ -63,11 +64,11 @@ abstract contract ArbiPool is AccessControl, ERC20 {
         grantRole(BANNED_ROLE, accountToBan);
     }
 
-    function isAdmin(address account) public virtual view returns (bool) {
+    function isAdmin(address account) public view returns (bool) {
         return hasRole(CUSTOM_ADMIN, account);
     }
 
-    function isBanned(address account) public virtual view returns (bool) {
+    function isBanned(address account) public view returns (bool) {
         return hasRole(BANNED_ROLE, account);
     }
 }
